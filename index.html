@@ -323,8 +323,9 @@
       background: var(--accent-green);
       transition: height 0.25s;
     }
-
     .project-card:hover::before { height: 100%; }
+    .project-card.wad::before   { background: #7f1d1d; }
+    .project-card.resumego::before { background: #2563eb; }
 
     .project-type {
       font-family: var(--mono);
@@ -620,7 +621,7 @@
     <div class="row g-4">
       <!-- WAD Furniture PH -->
       <div class="col-md-6 fade-up" style="transition-delay:0.1s">
-        <div class="project-card">
+        <div class="project-card wad">
           <div class="project-card-img">
             <img src="images/WAD.png" alt="WAD Furniture Philippines">
             <span class="project-card-badge"><i class="bi bi-shop me-1"></i> Full Stack · 2026</span>
@@ -646,7 +647,7 @@
 
       <!-- ResumeGo -->
       <div class="col-md-6 fade-up">
-        <div class="project-card">
+        <div class="project-card resumego">
           <div class="project-card-img">
             <img src="images/ResumeGO.png" alt="ResumeGo">
             <span class="project-card-badge"><i class="bi bi-globe me-1"></i> Web App · Capstone 2025</span>
