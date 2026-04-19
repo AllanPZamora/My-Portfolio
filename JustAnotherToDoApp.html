@@ -25,7 +25,8 @@
     .slider-outer { max-width: 780px; margin: 0 auto; }
     .slider-track-wrap { overflow: hidden; border-radius: 0 0 3px 3px; }
     .slider-track { display: flex; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease; }
-    .app-screenshot { width: 100%; display: block; max-height: 460px; object-fit: cover; transition: opacity 0.35s ease; }
+    .app-screenshot { width: 100%; display: block; max-height: 400px; object-fit: cover; transition: opacity 0.35s ease; }
+    .screenshot-label { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.6rem; text-align: center; }
 
     /* arrow buttons */
     .slider-arrow {
@@ -112,36 +113,45 @@
   <!-- SCREENSHOTS -->
   <section id="preview" style="background: var(--surface);">
     <div class="container">
-      <div class="row mb-4 fade-up">
-        <div class="col-12">
-          <p class="section-label">Preview</p>
+      <div class="fade-up">
+        <p class="section-label">Preview</p>
 
-          <div class="d-flex gap-2 mb-4">
-            <button class="mode-btn active" id="btnDark" onclick="setMode('dark')">
-              <i class="bi bi-moon-fill me-1"></i> Dark Mode
-            </button>
-            <button class="mode-btn" id="btnLight" onclick="setMode('light')">
-              <i class="bi bi-sun-fill me-1"></i> Light Mode
-            </button>
-          </div>
-
-          <div class="slider-outer position-relative">
-            <div class="app-window">
-              <div class="app-window-bar">
-                <span class="win-label" id="winLabel">Dark Mode</span>
-              </div>
-              <div class="slider-track-wrap">
-                <img
-                  id="screenshotImg"
-                  class="app-screenshot"
-                  src="images/ToDoApp/ToDo-CViewDark.PNG"
-                  onerror="this.src='https://placehold.co/900x500/1a1a1a/444?text=Dark+Mode'"
-                  alt="Dark Mode">
-              </div>
-            </div>
-          </div>
-
+        <div class="d-flex gap-2 mb-4">
+          <button class="mode-btn active" id="btnDark" onclick="setMode('dark')">
+            <i class="bi bi-moon-fill me-1"></i> Dark Mode
+          </button>
+          <button class="mode-btn" id="btnLight" onclick="setMode('light')">
+            <i class="bi bi-sun-fill me-1"></i> Light Mode
+          </button>
         </div>
+
+        <div class="row g-3">
+          <!-- Calendar View -->
+          <div class="col-md-6">
+            <div class="app-window">
+              <img
+                id="imgCalendar"
+                class="app-screenshot"
+                src="images/ToDoApp/ToDo-CViewDark.PNG"
+                onerror="this.src='https://placehold.co/700x420/1a1a1a/444?text=Calendar+View'"
+                alt="Calendar View">
+            </div>
+            <p class="screenshot-label"><i class="bi bi-calendar3 me-1"></i> Calendar View</p>
+          </div>
+          <!-- Task View -->
+          <div class="col-md-6">
+            <div class="app-window">
+              <img
+                id="imgTask"
+                class="app-screenshot"
+                src="images/ToDoApp/ToDo-TViewDark.PNG"
+                onerror="this.src='https://placehold.co/700x420/1a1a1a/555?text=Task+View'"
+                alt="Task View">
+            </div>
+            <p class="screenshot-label"><i class="bi bi-list-check me-1"></i> Task View</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -263,24 +273,38 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const images = {
-      dark:  { src: 'images/ToDoApp/ToDo-CViewDark.PNG',  fallback: 'https://placehold.co/900x500/1a1a1a/444?text=Dark+Mode',  label: 'Dark Mode'  },
-      light: { src: 'images/ToDoApp/ToDo-CViewLight.PNG', fallback: 'https://placehold.co/900x500/f5f5f3/999?text=Light+Mode', label: 'Light Mode' }
+      dark:  {
+        calendar: 'images/ToDoApp/ToDo-CViewDark.PNG',
+        task:     'images/ToDoApp/ToDo-TViewDark.PNG',
+        calFb:    'https://placehold.co/700x420/1a1a1a/444?text=Calendar+View',
+        taskFb:   'https://placehold.co/700x420/1a1a1a/555?text=Task+View'
+      },
+      light: {
+        calendar: 'images/ToDoApp/ToDo-CViewLight.PNG',
+        task:     'images/ToDoApp/ToDo-TViewLight.PNG',
+        calFb:    'https://placehold.co/700x420/f5f5f3/999?text=Calendar+View',
+        taskFb:   'https://placehold.co/700x420/efefed/aaa?text=Task+View'
+      }
     };
     let currentMode = 'dark';
 
     function setMode(mode) {
       if (mode === currentMode) return;
       currentMode = mode;
-      const img   = document.getElementById('screenshotImg');
-      const label = document.getElementById('winLabel');
+      const imgCal  = document.getElementById('imgCalendar');
+      const imgTask = document.getElementById('imgTask');
       document.getElementById('btnDark').classList.toggle('active',  mode === 'dark');
       document.getElementById('btnLight').classList.toggle('active', mode === 'light');
-      img.style.opacity = '0';
+      // Fade both out
+      imgCal.style.opacity  = '0';
+      imgTask.style.opacity = '0';
       setTimeout(() => {
-        img.src = images[mode].src;
-        img.onerror = () => { img.src = images[mode].fallback; };
-        label.textContent = images[mode].label;
-        img.style.opacity = '1';
+        imgCal.src  = images[mode].calendar;
+        imgTask.src = images[mode].task;
+        imgCal.onerror  = () => { imgCal.src  = images[mode].calFb;  };
+        imgTask.onerror = () => { imgTask.src = images[mode].taskFb; };
+        imgCal.style.opacity  = '1';
+        imgTask.style.opacity = '1';
       }, 350);
     }
 
