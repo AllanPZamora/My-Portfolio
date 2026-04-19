@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JustAnotherTodoApp — Showcase</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    /* ── app window chrome ── */
+    .app-window { border: 1px solid var(--border); border-radius: 3px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    .app-window-bar { background: var(--bg); border-bottom: 1px solid var(--border); padding: 0.55rem 1rem; display: flex; align-items: center; gap: 0.4rem; }
+    .win-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .win-dot-red    { background: #ff5f57; }
+    .win-dot-yellow { background: #febc2e; }
+    .win-dot-green  { background: #28c840; }
+    .win-label { font-family: var(--mono); font-size: 0.65rem; color: var(--ink-muted); letter-spacing: 0.08em; margin-left: auto; text-transform: uppercase; }
+
+    /* ── slider ── */
+    .carousel-panel { transition: opacity 0.4s ease; }
+    .slider-outer { max-width: 780px; margin: 0 auto; }
+    .slider-track-wrap { overflow: hidden; border-radius: 0 0 3px 3px; }
+    .slider-track { display: flex; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease; }
+    .app-screenshot { width: 100%; display: block; max-height: 400px; object-fit: cover; transition: opacity 0.35s ease; }
+    .screenshot-label { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.6rem; text-align: center; }
+
+    /* arrow buttons */
+    .slider-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--ink); width: 36px; height: 36px; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; z-index: 10;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .slider-arrow:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .slider-arrow.prev { left: -48px; }
+    .slider-arrow.next { right: -48px; }
+    @media (max-width: 960px) {
+      .slider-arrow.prev { left: -2px; }
+      .slider-arrow.next { right: -2px; }
+    }
+
+    /* dots */
+    .slider-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+    .slider-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); border: none; padding: 0; cursor: pointer; transition: background 0.2s; }
+    .slider-dot.active { background: var(--ink); }
+
+    /* ── features ── */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-top: 2.5rem; }
+    .feature-cell { background: var(--surface); padding: 1.5rem; }
+    .feature-icon { font-size: 1.3rem; display: block; margin-bottom: 0.75rem; }
+    .feature-name { font-family: var(--display); font-size: 0.9rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .feature-desc { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-muted); line-height: 1.6; }
+
+    /* ── storage ── */
+    .code-path { font-family: var(--mono); font-size: 0.8rem; background: var(--tag-bg); border: 1px solid var(--border); border-radius: 3px; padding: 1.25rem 1.5rem; color: var(--ink-muted); line-height: 2; margin-top: 1.5rem; }
+    .code-path .highlight { color: var(--ink); }
+    .code-path .dim { opacity: 0.45; }
+
+    /* ── cta ── */
+    .cta-inner { border: 1px solid var(--border); border-radius: 3px; padding: 2.5rem; position: relative; overflow: hidden; }
+    .cta-inner::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent-green); }
+    .btn-github { background: #24292f; color: #fff; border: none; font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em; border-radius: 2px; padding: 0.6rem 1.25rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: background 0.2s; }
+    .btn-github:hover { background: #444c56; color: #fff; }
+    .mode-btn { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--tag-bg); color: var(--ink-muted); border: 1px solid var(--border); border-radius: 2px; padding: 0.4rem 1rem; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+    .mode-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .mode-btn:not(.active):hover { border-color: var(--ink); color: var(--ink); }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR — same as index but with back link + page title -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="nav-logo" href="index.html">
+        <i class="bi bi-arrow-left me-2"></i>Back to Portfolio
+      </a>
+      <span class="nav-logo ms-auto" style="pointer-events:none;">
+        <span>just another</span>.todoapp
+      </span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" style="min-height: auto; padding: 4rem 0 3rem;">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 fade-up">
+          <h1 class="hero-projects">Just Another<br>Todo App</h1>
+          <p class="hero-desc">
+            A personal task and calendar manager for Windows. Supports multiple user profiles,
+            recurring tasks, and multiple color themes — all stored locally as JSON with no database needed.
+          </p>
+          <div class="hero-badge-row">
+            <span class="hero-badge green">C#</span>
+            <span class="hero-badge green">.NET 10</span>
+            <span class="hero-badge green">WPF</span>
+            <span class="hero-badge">Windows</span>
+            <span class="hero-badge">JSON</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- SCREENSHOTS -->
+  <section id="preview" style="background: var(--surface);">
+    <div class="container">
+      <div class="fade-up">
+        <p class="section-label">Preview</p>
+
+        <div class="d-flex gap-2 mb-4">
+          <button class="mode-btn active" id="btnDark" onclick="setMode('dark')">
+            <i class="bi bi-moon-fill me-1"></i> Dark Mode
+          </button>
+          <button class="mode-btn" id="btnLight" onclick="setMode('light')">
+            <i class="bi bi-sun-fill me-1"></i> Light Mode
+          </button>
+        </div>
+
+        <div class="row g-3">
+          <!-- Calendar View -->
+          <div class="col-md-6">
+            <div class="app-window">
+              <img
+                id="imgCalendar"
+                class="app-screenshot"
+                src="images/ToDoApp/ToDo-CViewDark.PNG"
+                onerror="this.src='https://placehold.co/700x420/1a1a1a/444?text=Calendar+View'"
+                alt="Calendar View">
+            </div>
+            <p class="screenshot-label"><i class="bi bi-calendar3 me-1"></i> Calendar View</p>
+          </div>
+          <!-- Task View -->
+          <div class="col-md-6">
+            <div class="app-window">
+              <img
+                id="imgTask"
+                class="app-screenshot"
+                src="images/ToDoApp/ToDo-TViewDark.PNG"
+                onerror="this.src='https://placehold.co/700x420/1a1a1a/555?text=Task+View'"
+                alt="Task View">
+            </div>
+            <p class="screenshot-label"><i class="bi bi-list-check me-1"></i> Task View</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container fade-up">
+      <p class="section-label">Features</p>
+      <h2 class="section-heading">What it does</h2>
+      <div class="feature-grid">
+        <div class="feature-cell">
+          <span class="feature-icon"><i class="bi bi-people"></i></span>
+          <div class="feature-name">Multi-Profile</div>
+          <div class="feature-desc">Separate profiles each with their own tasks and theme preference.</div>
+        </div>
+        <div class="feature-cell">
+          <span class="feature-icon"><i class="bi bi-calendar3"></i></span>
+          <div class="feature-name">Calendar View</div>
+          <div class="feature-desc">Monthly and weekly views with dot indicators on days that have tasks.</div>
+        </div>
+        <div class="feature-cell">
+          <span class="feature-icon"><i class="bi bi-arrow-repeat"></i></span>
+          <div class="feature-name">Recurring Tasks</div>
+          <div class="feature-desc">Repeat tasks daily, weekly, or monthly with an optional end date.</div>
+        </div>
+        <div class="feature-cell">
+          <span class="feature-icon"><i class="bi bi-bar-chart-line"></i></span>
+          <div class="feature-name">Task Dashboard</div>
+          <div class="feature-desc">See Today, Upcoming, and Backlog tasks in one organized view.</div>
+        </div>
+        <div class="feature-cell">
+          <span class="feature-icon"><i class="bi bi-palette"></i></span>
+          <div class="feature-name">Themes</div>
+          <div class="feature-desc">Multiple color themes saved per profile — switch anytime from settings.</div>
+        </div>
+        <div class="feature-cell">
+          <span class="feature-icon"><i class="bi bi-hdd"></i></span>
+          <div class="feature-name">Local Storage</div>
+          <div class="feature-desc">All data saved as JSON on your machine. No internet or account needed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- STORAGE -->
+  <section id="storage" style="background: var(--surface);">
+    <div class="container fade-up">
+      <p class="section-label">Data Storage</p>
+      <h2 class="section-heading">Where your data lives</h2>
+      <p class="hero-desc mt-3">
+        Everything is saved locally as JSON files — no account, no cloud, no database.
+        The folder is created automatically on first launch.
+      </p>
+      <div class="code-path">
+        <span class="dim"># Location</span><br>
+        <span class="highlight">C:\Users\&lt;You&gt;\AppData\Roaming\TodoCalendarApp\</span><br><br>
+        <span class="dim"># Files</span><br>
+        <span class="highlight">profiles.json</span>&nbsp;&nbsp;&nbsp;<span class="dim">→ profiles (name, color, theme)</span><br>
+        <span class="highlight">tasks.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">→ tasks, recurrence, completion state</span>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- DOWNLOAD CTA -->
+  <section id="download">
+    <div class="container fade-up">
+      <div class="cta-inner">
+        <div class="row align-items-center g-4">
+          <div class="col-md-8">
+            <p class="section-label">Download</p>
+            <h2 class="section-heading">Get it for Windows</h2>
+            <p class="hero-desc mt-2 mb-0">Unzip and run <code>todoApp.exe</code> — no installer needed.</p>
+          </div>
+          <div class="col-md-4 d-flex gap-2 justify-content-md-end flex-wrap">
+            <!-- Update href once you publish the GitHub release -->
+            <a href="https://github.com/AllanPZamora/JustAnotherTodoApp" class="btn-github" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-github"></i> View on GitHub
+            </a>
+            <a href="https://github.com/AllanPZamora/JustAnotherTodoApp/releases" class="btn-github" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-download"></i> Download
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- FOOTER — identical to index.html -->
+  <footer id="contact">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <div class="footer-name">Allan Zamora</div>
+          <div class="mt-1" style="color:#777;">Software Developer</div>
+          <div class="mt-3">
+            <a href="mailto:you@email.com">you@email.com</a>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-md-end gap-2">
+          <a target="_blank" rel="noopener noreferrer" href="https://github.com/AllanPZamora" class="social-icon" title="GitHub"><i class="bi bi-github"></i></a>
+          <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/allan-gel-zamora-19833a395" class="social-icon" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+      <hr style="border-color:#222; margin: 2rem 0;">
+      <div style="font-size:0.7rem; color:#555; letter-spacing:0.06em;">
+        © 2026 · Built with Bootstrap 5
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const images = {
+      dark:  {
+        calendar: 'images/ToDoApp/ToDo-CViewDark.PNG',
+        task:     'images/ToDoApp/ToDo-TViewDark.PNG',
+        calFb:    'https://placehold.co/700x420/1a1a1a/444?text=Calendar+View',
+        taskFb:   'https://placehold.co/700x420/1a1a1a/555?text=Task+View'
+      },
+      light: {
+        calendar: 'images/ToDoApp/ToDo-CViewLight.PNG',
+        task:     'images/ToDoApp/ToDo-TViewLight.PNG',
+        calFb:    'https://placehold.co/700x420/f5f5f3/999?text=Calendar+View',
+        taskFb:   'https://placehold.co/700x420/efefed/aaa?text=Task+View'
+      }
+    };
+    let currentMode = 'dark';
+
+    function setMode(mode) {
+      if (mode === currentMode) return;
+      currentMode = mode;
+      const imgCal  = document.getElementById('imgCalendar');
+      const imgTask = document.getElementById('imgTask');
+      document.getElementById('btnDark').classList.toggle('active',  mode === 'dark');
+      document.getElementById('btnLight').classList.toggle('active', mode === 'light');
+      // Fade both out
+      imgCal.style.opacity  = '0';
+      imgTask.style.opacity = '0';
+      setTimeout(() => {
+        imgCal.src  = images[mode].calendar;
+        imgTask.src = images[mode].task;
+        imgCal.onerror  = () => { imgCal.src  = images[mode].calFb;  };
+        imgTask.onerror = () => { imgTask.src = images[mode].taskFb; };
+        imgCal.style.opacity  = '1';
+        imgTask.style.opacity = '1';
+      }, 350);
+    }
+
+    // Fade up on scroll
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
