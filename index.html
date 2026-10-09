@@ -472,7 +472,49 @@
     </div>
   </footer>
 
+  <!-- CERTIFICATE VIEWER -->
+  <div class="modal fade cert-modal" id="certModal" tabindex="-1" aria-labelledby="certModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable modal-fullscreen-md-down">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="cert-modal-heading">
+            <div class="cert-issuer" id="certModalIssuer"></div>
+            <h5 class="modal-title" id="certModalTitle"></h5>
+          </div>
+          <div class="cert-modal-actions">
+            <a class="cert-btn" id="certOpenTab" href="#" target="_blank" rel="noopener">
+              <i class="bi bi-box-arrow-up-right"></i><span class="d-none d-sm-inline"> Open in new tab</span>
+            </a>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-body" id="certModalBody">
+          <div class="cert-loading" id="certLoading">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+            <span>Loading certificate…</span>
+          </div>
+          <div class="cert-error d-none" id="certError">
+            Couldn't load the viewer.
+            <a id="certErrorLink" href="#" target="_blank" rel="noopener">Open the certificate in a new tab</a>
+          </div>
+          <div id="certPages"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="cert-btn" id="certPrev" aria-label="Previous certificate">
+            <i class="bi bi-arrow-left"></i><span class="d-none d-sm-inline"> Previous</span>
+          </button>
+          <span class="cert-counter" id="certCounter"></span>
+          <button type="button" class="cert-btn" id="certNext" aria-label="Next certificate">
+            <span class="d-none d-sm-inline">Next </span><i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="js/certificates.js"></script>
   <script>
     // Fade-up on scroll
     const fadeEls = document.querySelectorAll('.fade-up');
